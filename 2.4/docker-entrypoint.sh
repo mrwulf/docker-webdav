@@ -79,15 +79,15 @@ fi
 if [ "${SSL_CERT:-none}" = "selfsigned" ]; then
     # Generate self-signed SSL certificate.
     # If SERVER_NAMES is given, use the first domain as the Common Name.
-    if [ ! -e /privkey.pem ] || [ ! -e /cert.pem ]; then
+    if [ ! -e /ssl/privkey.pem ] || [ ! -e /ssl/cert.pem ]; then
         openssl req -x509 -newkey rsa:2048 -days 1000 -nodes \
-            -keyout /privkey.pem -out /cert.pem -subj "/CN=${SERVER_NAME:-selfsigned}"
+            -keyout /ssl/privkey.pem -out /ssl/cert.pem -subj "/CN=${SERVER_NAME:-selfsigned}"
     fi
 fi
 
 # This will either be the self-signed certificate generated above or one that
 # has been bind mounted in by the user.
-if [ -e /privkey.pem ] && [ -e /cert.pem ]; then
+if [ -e /ssl/privkey.pem ] && [ -e /ssl/cert.pem ]; then
     # Enable SSL Apache modules.
     for i in http2 ssl; do
         sed -e "/^#LoadModule ${i}_module.*/s/^#//" \
